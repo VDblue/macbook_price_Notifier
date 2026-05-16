@@ -21,8 +21,8 @@ def format_report(by_size, usd_rate, date_str):
         data = by_size.get(size)
         lines.append(f'<b>{size}"</b>')
         if data:
-            uah = f"{data['min_price_uah']:,}".replace(",", " ")
-            usd = f"  /  ${data['min_price_usd']:,.0f}".replace(",", " ") if data.get("min_price_usd") else ""
+            uah = f"{data['price_uah']:,}".replace(",", " ")
+            usd = f"  /  ${data['price_usd']:,.0f}".replace(",", " ") if data.get("price_usd") else ""
             lines.append(f"  {uah} ₴{usd}")
             lines.append(f"  {data['specs']}  {data['color']}")
         else:
