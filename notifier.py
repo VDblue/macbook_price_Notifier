@@ -15,7 +15,7 @@ def send(text):
     urllib_request.urlopen(req, timeout=15)
 
 
-def format_report(by_size, usd_rate, date_str):
+def format_report(by_size, usd_rate, date_str, historical_mins=None):
     lines = [f"<b>MacBook Air M5 — {date_str}</b>", ""]
     for size in ("13", "15"):
         data = by_size.get(size)
@@ -25,8 +25,12 @@ def format_report(by_size, usd_rate, date_str):
             usd = f"  /  ${data['price_usd']:,.0f}".replace(",", " ") if data.get("price_usd") else ""
             lines.append(f"  {uah} ₴{usd}")
             lines.append(f"  {data['specs']}  {data['color']}")
-        else:
-            lines.append("  ціну не знайдено")
+            if hist_min:
+                diff = today_usd - hist_min
+                sign = "+" if diff >= 0 else "−"
+                lines.append(f"  Min ever: ${hist_min:,.0f}  ({sign}${abs(diff):,.0f})")
+            else:
+                lines.append("  ціну не знайдено")
         lines.append("")
     if usd_rate:
         lines.append(f"Курс: 1 USD = {usd_rate:.2f} ₴ (готівка, minfin)")
