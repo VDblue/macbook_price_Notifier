@@ -19,6 +19,7 @@ def format_report(by_size, usd_rate, date_str, historical_mins=None):
     lines = [f"<b>MacBook Air M5 — {date_str}</b>", ""]
     for size in ("13", "15"):
         data = by_size.get(size)
+        hist_min = (historical_mins or {}).get(size)
         lines.append(f'<b>{size}"</b>')
         if data:
             uah = f"{data['price_uah']:,}".replace(",", " ")
