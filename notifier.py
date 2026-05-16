@@ -4,8 +4,8 @@ from urllib import request as urllib_request
 
 
 def send(text):
-    token = os.environ["TG_BOT_TOKEN"]
-    chat_id = os.environ["TG_CHAT_ID"]
+    token = os.environ["TG_BOT_TOKEN"].strip()
+    chat_id = os.environ["TG_CHAT_ID"].strip()
     payload = json.dumps({"chat_id": chat_id, "text": text, "parse_mode": "HTML"}).encode()
     req = urllib_request.Request(
         f"https://api.telegram.org/bot{token}/sendMessage",
