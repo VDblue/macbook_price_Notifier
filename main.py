@@ -59,7 +59,7 @@ def main():
         append_errors(errors)
         print("  Sheets updated.")
     except Exception as e:
-        print(f"  Sheets error: {e}", file=sys.stderr)
+        print(f"  Sheets error: {type(e).__name__}: {e!r}", file=sys.stderr)
 
 
 if __name__ == "__main__":
