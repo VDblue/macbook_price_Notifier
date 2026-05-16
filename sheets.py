@@ -8,12 +8,12 @@ _ERRORS_COLS = ["timestamp", "url", "error"]
 
 
 def _client():
-    sa = json.loads(os.environ["GOOGLE_SERVICE_ACCOUNT_JSON"])
+    sa = json.loads(os.environ["GOOGLE_SERVICE_ACCOUNT_JSON"].strip())
     return gspread.service_account_from_dict(sa)
 
 
 def _worksheet(gc, tab_name, headers):
-    sh = gc.open_by_key(os.environ["SHEET_ID"])
+    sh = gc.open_by_key(os.environ["SHEET_ID"].strip())
     try:
         return sh.worksheet(tab_name)
     except gspread.exceptions.WorksheetNotFound:
