@@ -22,6 +22,7 @@ def format_report(by_size, usd_rate, date_str, historical_mins=None):
         hist_min = (historical_mins or {}).get(size)
         lines.append(f'<b>{size}"</b>')
         if data:
+            today_usd = data["price_usd"]
             uah = f"{data['price_uah']:,}".replace(",", " ")
             usd = f"  /  ${data['price_usd']:,.0f}".replace(",", " ") if data.get("price_usd") else ""
             lines.append(f"  {uah} ₴{usd}")
