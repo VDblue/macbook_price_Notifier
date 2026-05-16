@@ -20,7 +20,7 @@ def main():
     if usd_rate is None:
         print("  WARNING: failed to fetch USD rate", file=sys.stderr)
     else:
-    print(f"  Rate: {usd_rate}")
+        print(f"  Rate: {usd_rate}")
 
     for p in prices:
         p["price_usd"] = round(p["price_uah"] / usd_rate, 2) if usd_rate else None
