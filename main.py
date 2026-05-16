@@ -17,6 +17,9 @@ def main():
 
     print("Fetching USD rate from minfin.com.ua...")
     usd_rate = get_usd_rate()
+    if usd_rate is None:
+        print("  WARNING: failed to fetch USD rate", file=sys.stderr)
+    else:
     print(f"  Rate: {usd_rate}")
 
     for p in prices:
@@ -27,6 +30,7 @@ def main():
     for size in ("13", "15"):
         group = [p for p in prices if p["size"] == size]
         if not group:
+            print(f"  WARNING: no prices found for {size}\"", file=sys.stderr)
             by_size[size] = None
             continue
         best = min(group, key=lambda x: x["price_uah"])
@@ -43,9 +47,12 @@ def main():
 
     print("Sending Telegram notification...")
     msg = format_report(by_size, usd_rate, date_str)
-    send(msg)
+    try:
+        send(msg)
+    except Exception as e:
+        print(f"  Telegram error: {e}", file=sys.stderr)
     print(msg)
-
+    
     print("Writing to Google Sheets...")
     try:
         append_prices(sheet_rows)
