@@ -45,3 +45,20 @@ def append_errors(errors):
     ts = datetime.now(timezone.utc).isoformat(timespec="seconds")
     for e in errors:
         ws.append_row([ts, e["url"], e["error"]])
+
+
+def get_min_prices():
+    gc = _client()
+    ws = _worksheet(gc, "prices", _PRICES_COLS)
+    records = ws.get_all_records()
+    
+    mins = {}
+    for size in ("13", "15"):
+        prices = [
+            float(r["min_price_usd"])
+            for r in records
+            if str(r["size"]) == size and r["min_price_usd"] not in ("", None)
+        ]
+        mins[size] = min(prices) if prices else None
+    return mins
+    
