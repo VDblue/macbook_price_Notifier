@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 from parser import fetch_prices
 from exchange import get_usd_rate
-from sheets import append_prices, append_errors
+from sheets import append_prices, append_errors, get_min_prices
 from notifier import send, format_report
 
 
@@ -22,6 +22,13 @@ def main():
     else:
         print(f"  Rate: {usd_rate}")
 
+    print("Fetching historical minimums from Sheets...")
+    try:
+        historical_mins = get_min_prices()
+    except Exception as e:
+        print(f"  Sheets read error: {e}", file=sys.stderr)
+        historical_mins = {}
+    
     for p in prices:
         p["price_usd"] = round(p["price_uah"] / usd_rate, 2) if usd_rate else None
 
@@ -46,7 +53,7 @@ def main():
         })
 
     print("Sending Telegram notification...")
-    msg = format_report(by_size, usd_rate, date_str)
+    msg = format_report(by_size, usd_rate, date_str, historical_mins)
     try:
         send(msg)
     except Exception as e:
