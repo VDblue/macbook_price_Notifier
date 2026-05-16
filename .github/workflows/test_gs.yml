@@ -13,8 +13,8 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install curl_cffi
-        run: pip install curl_cffi -q
+      - name: Install dependencies
+        run: pip install -r requirements.txt -q
 
-      - name: Test access to hotline.ua
+      - name: Test access to gs
         run: python test_sheets.py
