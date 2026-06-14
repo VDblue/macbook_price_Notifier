@@ -1,6 +1,5 @@
 import sys
 from datetime import datetime, timezone
-
 from parser import fetch_prices
 from exchange import get_usd_rate
 from sheets import append_prices, append_errors, get_min_prices
@@ -28,7 +27,7 @@ def main():
     except Exception as e:
         print(f"  Sheets read error: {e}", file=sys.stderr)
         historical_mins = {}
-    
+
     for p in prices:
         p["price_usd"] = round(p["price_uah"] / usd_rate, 2) if usd_rate else None
 
@@ -52,14 +51,28 @@ def main():
             "model_specs": best["specs"],
         })
 
-    print("Sending Telegram notification...")
-    msg = format_report(by_size, usd_rate, date_str, historical_mins)
-    try:
-        send(msg)
-    except Exception as e:
-        print(f"  Telegram error: {e}", file=sys.stderr)
-    print(msg)
-    
+    # Повідомлення надсилаємо тільки для 13" і лише коли ціна впала нижче історичного мінімуму
+    best_13 = by_size.get("13")
+    hist_min_13 = (historical_mins or {}).get("13")
+
+    should_notify = (
+        best_13 is not None
+        and best_13.get("price_usd") is not None
+        and hist_min_13 is not None
+        and best_13["price_usd"] < hist_min_13
+    )
+
+    if should_notify:
+        print("Price dropped below historical minimum — sending Telegram notification...")
+        msg = format_report(best_13, usd_rate, date_str, hist_min_13)
+        try:
+            send(msg)
+        except Exception as e:
+            print(f"  Telegram error: {e}", file=sys.stderr)
+        print(msg)
+    else:
+        print("No new minimum for 13\" — notification skipped.")
+
     print("Writing to Google Sheets...")
     try:
         append_prices(sheet_rows)
